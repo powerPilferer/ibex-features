@@ -161,7 +161,7 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
         <!-- 커튼 리본: 모선 2R 키잉 마스터의 앞 5.5초를 코사인 시간 왜곡 핑퐁(17.3s 루프)으로. 사파리 = HEVC 알파, 그 외 = VP9 알파 -->
         <div class="ribbon" id="ribbon" aria-hidden="true">
           <div class="ribbon__fit" id="ribbonFit">
-            <img class="ribbon__poster" id="ribbonPoster" src="assets/ribbon/v2/ribbon-v2-exact-poster.webp" alt="">
+            <img class="ribbon__poster" id="ribbonPoster" src="assets/ribbon/v3/ribbon-v3-x15-poster.webp" alt="">
             <video class="ribbon__video" id="ribbonVideo" muted loop playsinline preload="auto" disablepictureinpicture></video>
           </div>
         </div>
@@ -279,9 +279,12 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
     // 모선 v2(10-16): 원해상도 1920×1001 + 아래 투명 1행(=1002, videotoolbox 홀수 높이 회피) · 색 구움 → 필터 없음. M = 모선 추천(L·H 도 같은 폴더)
     v2: { dir: 'assets/ribbon/v2/', webm: 'ribbon-v2-exact-vp9-M.webm', mov: 'ribbon-v2-exact-hevc-M.mov', poster: 'ribbon-v2-exact-poster.webp',
           enc: [1920, 1002], crop: [0, 17, 1920, 1019], tau0: 4.069,
-          filter: 'none' }
+          filter: 'none' },
+    // 모선 v3(10-16, 15차): 그린 원본 SeedVR2 ×2 업스케일($1.29) → 재키잉 → 1.5배(2880×1506) 전달 · 색 구움. 흐림 해결(가는 결 3.35배)
+    v3: { dir: 'assets/ribbon/v3/', webm: 'ribbon-v3-x15-vp9-M.webm', mov: 'ribbon-v3-x15-hevc-M.mov', poster: 'ribbon-v3-x15-poster.webp',
+          enc: [2880, 1506], crop: [0, 16, 1920, 1020], tau0: 4.069, filter: 'none' }
   };
-  const RIBBON_USE = qs.get('ribv') === '1' ? 'v1' : 'v2';   // ?ribv=1 = 3차 영상(0.8배 축소 + CSS 색 필터)
+  const RIBBON_USE = qs.get('ribv') === '1' ? 'v1' : qs.get('ribv') === '2' ? 'v2' : 'v3';   // 15차 기본 v3, ?ribv=2 = v2(원해상도), ?ribv=1 = 3차   // ?ribv=1 = 3차 영상(0.8배 축소 + CSS 색 필터)
   if (/^[LMH]$/.test(qs.get('ribq') || '')) { const q = qs.get('ribq'); RIBBON_SETS.v2.webm = `ribbon-v2-exact-vp9-${q}.webm`; RIBBON_SETS.v2.mov = `ribbon-v2-exact-hevc-${q}.mov`; }   // ?ribq=L|M|H
   const RB = RIBBON_SETS[RIBBON_USE];
 
