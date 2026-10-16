@@ -390,8 +390,10 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
   //   지점 기울기 = 시작 1·R(첫 휠부터 움직임) · 02·03 camH·R · 끝 camEnd·R. 단조(기울기 ≤ 3R) → 어디서나 속도 > 0, 멈춤 없음.
   //   마지막 구간(다리)만 길이를 평균 기울기 = (시작 + 끝)/2 로 잡는다 → 속도가 다리 내내 곧게 줄어 특장점 첫 화면에 내려앉는다(중간 불룩 없음).
   const R = M.camRate * H, CK = M.cam;
-  const MK = [1, M.camH, M.camH, M.camEnd].map(m => m * R);
-  const PK = [0]; for (let i = 1; i < CK.length; i++) PK.push(PK[i - 1] + (CK[i] - CK[i - 1]) / (i === CK.length - 1 ? (MK[i - 1] + MK[i]) / 2 : R));
+  // 13차(사장님 '커튼 좌→우 움직이는 스크롤을 조금만 더 길게'): 01→02 구간만 카메라를 느리게(S1 .72 → 그 구간 스크롤 길이 ×1.39). 02 지점 기울기는 두 구간 평균. ?cs1=1 이전
+  const S1 = parseFloat(qs.get('cs1')) || .72;
+  const MK = [S1, (S1 + 1) / 2 * M.camH, M.camH, M.camEnd].map(m => m * R);
+  const PK = [0]; for (let i = 1; i < CK.length; i++) PK.push(PK[i - 1] + (CK[i] - CK[i - 1]) / (i === CK.length - 1 ? (MK[i - 1] + MK[i]) / 2 : i === 1 ? R * S1 : R));
   const PMAX = PK[PK.length - 1];
   $('track').style.height = (PMAX + 1) * 100 + 'vh';
   function camAt(p) {
