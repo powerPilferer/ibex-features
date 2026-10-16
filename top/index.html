@@ -234,7 +234,7 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
     curtain: { p0: { x: -993, y: -96, r: 30, s: 1.36 }, slide: [0, 900] },   // 8차: 물러남 창 = 카메라(세계 px). 첫 휠부터 물러나 문장이 화면 가운데 오기 전에 다 걷힘
     reveal: { in: 20, out: 100 },                // 문장 드러냄: 커튼 왼쪽 경계 − in 까지 또렷, + out 에서 0 (커튼 밑에서 나옴)
     ribbonGrow: .18,                             // 02→03 리본이 앞으로 커짐(꼬리가 위로 빠지는 동안)
-    load: { model: [.25, 1.8, 36], hero: [1.0, .9, 22], heroGap: .22, dots: [.5, 1.3, .9] },   // 도트 [시작 s, 거리 지연 폭 s, 점 하나 자라는 s]   // [시작 s, 길이 s, 아래에서 px]
+    load: { /* 12차 도트 [0,.5,.35](사장님 '첨부터 바로'): 이전 [.5,1.3,.9] */ model: [.25, 1.8, 36], hero: [1.0, .9, 22], heroGap: .22, dots: [0, .5, .35] },   // 도트 [시작 s, 거리 지연 폭 s, 점 하나 자라는 s]   // [시작 s, 길이 s, 아래에서 px]
     text: { gap: .16, ramp: .55, rise: 18 },     // 줄 순차 등장: 창이 열린 순간부터 k·gap 지연, ramp 동안 rise px 아래에서
     arcs: [ { m: [953, 1775, 1411], win: [.02, .80], from: 760 }, { m: [961, 2154, 1294], win: [.16, 1], from: 720 } ],   // 특장점 MEAS 호1·2, 위(큰 호)가 먼저·빠르게
     cloudBridgeFade: [.38, .86],
