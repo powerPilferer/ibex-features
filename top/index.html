@@ -243,7 +243,7 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
     brandFade: [1100, 1400],                     // 문장이 위로 빠지며 GNB 닿기 전에 흐려짐
     nowWin: [[.35, .70], [.50, .85]],          // 5차: '이젠,' / '산소의 시간' 줄별 등장 창(02→03 진행 segU(3)) — 아래 구름이 화면에 들어온 직후부터, 문장 퇴장(0~.45)과 살짝 겹침
     nowOld: qs.get('now') === 'old', now5: qs.get('now') === '5',   // ?now=5 = 5차(스크롤 줄별), ?now=old = 4차
-    mFade: qs.get('mfade') === '0' ? null : [parseFloat(qs.get('mf0')) || 120, parseFloat(qs.get('mf1')) || 520],   // 10차 모델 알파 퇴장 창(카메라 세계 y). ?mf0 ?mf1
+    mFade: qs.get('mfade') === '0' ? null : [parseFloat(qs.get('mf0')) || 120, parseFloat(qs.get('mf1')) || 800],   // 11차 사장님 '?mf1=800 이걸로' (10차 520).   // 10차 모델 알파 퇴장 창(카메라 세계 y). ?mf0 ?mf1
     nowOpen: .42,                                // 6차: 02→03 진행 .25(아래 구름이 화면에 막 들어옴)에서 첫 타이틀식 등장 시작. 깊이 d.now .35 = 배경(1.25)보다 훨씬 느려 위에서 먼저 보이고 멈춤 03 에서 피그마 자리. ?nowd= 로 깊이
     drift: { amp: 10, period: 56 }               // 구름 흐름(시간): 알아채기 어려울 만큼
   };
@@ -340,7 +340,8 @@ html.no-motion .arcs, html.no-motion .copy--oxygen, html.no-motion .ribbon__vide
   if (qs.get('dotf')) DP.floor = parseFloat(qs.get('dotf'));   // ?dotf= 바닥(0 = 완전히 꺼짐)
   DP.floor = DP.floor || 0;
   if (qs.get('dotb')) { const f = parseFloat(qs.get('dotb')); DP.tin *= f; DP.hold *= f; DP.tout *= f; }
-  DP.rel = M.load.dots[0] + M.load.dots[1] + M.load.dots[2] + .8;   // 다 펼쳐진 자세를 .8s 보여준 뒤 꼬리 시작
+  // 11차(사장님 '처음 등장하고 반복되기까지 한참 걸림'): 인트로가 다 펼쳐질 때(3.5s)까지 기다리지 않고, 가운데 점이 자라자마자(1.4s) 첫 꼬리가 출발 → 인트로가 곧 첫 파동. ?dotrel= 초
+  DP.rel = qs.get('dotrel') ? parseFloat(qs.get('dotrel')) : M.load.dots[0] + M.load.dots[2];   // 10차: dots 합계 + .8 = 3.5s
   const dotWave = (tl, k) => {
     const tau = tl - DP.rel - k * DP.D;
     if (tau < 0) return 1;
