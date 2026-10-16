@@ -537,7 +537,10 @@ html.no-motion .copy--oxygen > * { opacity: 1; }
       const dur = T * lerp(M.load.outerFrac, M.load.innerFrac, f) * (1 - M.load.startSpread * f), delay = T * M.load.startSpread * f;
       loadPlan[k] = { dist, dur, delay }; tText = Math.max(tText, delay + dur); });
     // 36차(사장님 '이젠 너무 빨리 — 첫 구의 등장 후 등장'): 글자 시작 = 첫(맨 위·큰) 호가 다 올라온 시점 × .9. ?tat=.55/.12/.001 로 이전 방식(전체 로드 비율)
-    { const p0 = loadPlan[visIdx[0]]; tText = qs.get('tat') ? tText * parseFloat(qs.get('tat')) : (p0 ? (p0.delay + p0.dur) * .9 : tText * .4); }
+    // 37차(사장님 '두 번째 구가 올라올 때 — 지금보단 살짝 빠르게'): 둘째 호가 올라오는 도중(둘째 호 출발 .47s + dur·.08 ≈ .64s, 36차 .98s보다 살짝 빠름). ?tt=1 = 36차(첫 호 도착 ×.9)
+    { const p0 = loadPlan[visIdx[0]], p1 = loadPlan[visIdx[1]];
+      tText = qs.get('tat') ? tText * parseFloat(qs.get('tat')) : qs.get('tt') === '1' || !p1 ? (p0 ? (p0.delay + p0.dur) * .9 : tText * .4) : p1.delay + p1.dur * .08;
+      window.__tText = tText; }
     const t0 = performance.now() / 1000;
     const loadOff = (k, t) => { const p = loadPlan[k]; if (!p || noMotion) return 0; return p.dist * (1 - expoOut(clamp((t - p.delay) / p.dur, 0, 1))); };
     const loadText = t => noMotion ? 1 : clamp((t - tText) / 1.25, 0, 1);   // 로드 글자: 1.25s 창 안에서 세 덩어리 순차(아래 setText)
