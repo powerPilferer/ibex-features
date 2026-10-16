@@ -536,7 +536,8 @@ html.no-motion .copy--oxygen > * { opacity: 1; }
     visIdx.forEach((k, i) => { const dist = H + 40 - discs[k].top; const f = i / nV;
       const dur = T * lerp(M.load.outerFrac, M.load.innerFrac, f) * (1 - M.load.startSpread * f), delay = T * M.load.startSpread * f;
       loadPlan[k] = { dist, dur, delay }; tText = Math.max(tText, delay + dur); });
-    tText = tText * (parseFloat(qs.get('tat')) || M.text.loadAt);        // 34차 .55→.12, 35차(사장님 '아예 첫 구가 올라오자마자부터'): → .001(로드 시작과 함께). ?tat=.55 / .12 이전
+    // 36차(사장님 '이젠 너무 빨리 — 첫 구의 등장 후 등장'): 글자 시작 = 첫(맨 위·큰) 호가 다 올라온 시점 × .9. ?tat=.55/.12/.001 로 이전 방식(전체 로드 비율)
+    { const p0 = loadPlan[visIdx[0]]; tText = qs.get('tat') ? tText * parseFloat(qs.get('tat')) : (p0 ? (p0.delay + p0.dur) * .9 : tText * .4); }
     const t0 = performance.now() / 1000;
     const loadOff = (k, t) => { const p = loadPlan[k]; if (!p || noMotion) return 0; return p.dist * (1 - expoOut(clamp((t - p.delay) / p.dur, 0, 1))); };
     const loadText = t => noMotion ? 1 : clamp((t - tText) / 1.25, 0, 1);   // 로드 글자: 1.25s 창 안에서 세 덩어리 순차(아래 setText)
