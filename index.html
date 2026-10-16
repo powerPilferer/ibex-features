@@ -187,7 +187,7 @@ html.no-motion .copy--oxygen > * { opacity: 1; }
     controlIn: [.38, .58], controlRise: [.36, .75], controlFrom: 640,   // v27: 지면이 다 빠진 .38 부터(이때 구 알파 ≈.14 — 구와만 잠깐 겹침)    // 3단: 지면이 다 빠진 뒤(.40) 인물이 아래(+640)에서 올라옴 (v25: [0,.35]·[0,.6] — 지면과 이중 노출)
     controlLiftIn: [.7, .97], controlLiftIn2: 260,            // 3단 뒤: 올라오자마자 살짝 더 올라가며(260) 글자 → 3단 끝에서 멈춤
     controlLift: 300, controlLiftWin: [0, .9],   // 4단(0.5vh): 조금 더 올라감
-    text: { oxyOut: [0, .1], pressIn: [.86, 1], pressOut: [0, .15], progIn: [.8, .97], progOut: [0, .15], ctrlIn: [.7, .92], lift: 16, loadAt: .12 },   // 순차 등장 창을 조금 넓힘
+    text: { oxyOut: [0, .1], pressIn: [.86, 1], pressOut: [0, .15], progIn: [.8, .97], progOut: [0, .15], ctrlIn: [.7, .92], lift: 16, loadAt: .001 },   // 순차 등장 창을 조금 넓힘
     load: { total: 2.6, outerFrac: .42, innerFrac: 1.0, startSpread: .18 },   // 총 2.6초(10-16 사장님 "조금만 더 느리게", 전 2초), ?load=3 대안   // 총 길이(초). 호1 은 total·outerFrac, 안쪽으로 갈수록 innerFrac 까지 길어진다. 출발은 startSpread·total 안에서 순차
     control: { period: 7, float: 7 }
   };
@@ -536,7 +536,7 @@ html.no-motion .copy--oxygen > * { opacity: 1; }
     visIdx.forEach((k, i) => { const dist = H + 40 - discs[k].top; const f = i / nV;
       const dur = T * lerp(M.load.outerFrac, M.load.innerFrac, f) * (1 - M.load.startSpread * f), delay = T * M.load.startSpread * f;
       loadPlan[k] = { dist, dur, delay }; tText = Math.max(tText, delay + dur); });
-    tText = tText * (parseFloat(qs.get('tat')) || M.text.loadAt);        // 34차(사장님 '초반 타이틀 등장 앞당겨, 구 모션 신경 쓰지 말고'): .55(≈1.4s) → .12(≈0.3s). ?tat=.55 이전
+    tText = tText * (parseFloat(qs.get('tat')) || M.text.loadAt);        // 34차 .55→.12, 35차(사장님 '아예 첫 구가 올라오자마자부터'): → .001(로드 시작과 함께). ?tat=.55 / .12 이전
     const t0 = performance.now() / 1000;
     const loadOff = (k, t) => { const p = loadPlan[k]; if (!p || noMotion) return 0; return p.dist * (1 - expoOut(clamp((t - p.delay) / p.dur, 0, 1))); };
     const loadText = t => noMotion ? 1 : clamp((t - tText) / 1.25, 0, 1);   // 로드 글자: 1.25s 창 안에서 세 덩어리 순차(아래 setText)
