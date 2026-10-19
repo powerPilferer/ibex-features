@@ -1,0 +1,432 @@
+/* [통합 1019] 상단(퍼블리싱-상단-1016 15차) + 특장점(퍼블리싱-특장점-1015 37차) 한 장. 위: 상단 css 그대로(바꾼 곳 [통합]), 아래: 특장점 css 를 .f(무대)·.fc(글자) 아래로 묶음.
+   ibex 상단(01 산소 ON · 02 브랜드 문장 · 03 이젠, 산소의 시간) — 춘봉 2026-10-16 1차
+   좌표 = 피그마 332:29491(1920×3204) 그대로. 무대는 특장점과 같은 1920×1080 cover 스케일(--k), 그 안의 .world 가 세로 4284px 세계.
+   모든 움직임은 JS 가 transform/opacity 만 쓴다. 무JS·?motion=0·reduce = 피그마 정지 레이아웃(긴 한 장). */
+:root {
+  --k: 1;          /* 무대 cover 배율 */
+  --kw: 1;         /* 폭 배율(GNB·플로팅) */
+  --ice: #AEC8E1;  /* 특장점 바탕 = 피그마 상단 맨 아래 행 (174,200,225) */
+  --ink: #fff;
+  --dot: #4180BC;  /* GNB 로고 i 점 (피그마 실측) */
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #2B79C8; }
+body { overflow-x: clip; -webkit-font-smoothing: antialiased; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+img { display: block; }
+
+/* ---------- GNB 332:29522 (0,0 1920×75, padding 24 48, justify-between) — 메뉴 Poppins SemiBold 15/25, 자간 1.59px, gap 59 ---------- */
+.gnb { position: fixed; z-index: 20; left: 0; top: 0; width: 100%; height: calc(75px * var(--kw)); pointer-events: none;
+  display: flex; justify-content: space-between; align-items: flex-start; padding: calc(24px * var(--kw)) calc(48px * var(--kw)) 0; }
+.gnb a { pointer-events: auto; }
+.gnb__logo { display: block; width: calc(72px * var(--kw)); height: calc(27px * var(--kw)); }
+.gnb__logo img { display: block; width: 100%; height: 100%; }
+.gnb__nav { display: flex; gap: calc(59px * var(--kw)); }
+.gnb__nav a { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: calc(15px * var(--kw)); line-height: calc(25px * var(--kw)); letter-spacing: calc(1.59px * var(--kw)); margin-right: calc(-1.59px * var(--kw)); color: var(--ink); text-decoration: none; transition: opacity 180ms cubic-bezier(.4,0,.2,1); }
+.gnb__nav a:hover { opacity: .72; }
+.gnb a:focus-visible, .quick a:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 2px; }
+
+/* ---------- 오른쪽 플로팅 332:29557 (1792,485 82×263): bg #538ccf, 테두리 1px 흰 10%, 알약, padding 24 0, 항목 gap 24 / 아이콘·라벨 gap 12 ---------- */
+.quick { position: fixed; z-index: 20; left: calc(1792px * var(--kw)); top: calc(485px * var(--kw)); width: calc(82px * var(--kw)); height: calc(263px * var(--kw));
+  border-radius: 999px; background: #538ccf; border: 1px solid rgba(255,255,255,.1);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: calc(24px * var(--kw)); gap: calc(31.5px * var(--kw)); }   /* 스펙 gap 24 + FA 글리프 상자(19.5)로는 항목 간격이 79.5 가 안 나와 export 실측(아이콘 윗선 510·589·669)에 맞춤 */
+.quick__item { display: flex; flex-direction: column; align-items: center; gap: calc(12px * var(--kw)); color: #fff; text-decoration: none; transition: opacity 180ms cubic-bezier(.4,0,.2,1); }
+.quick__item:hover { opacity: .78; }
+.quick__ico { display: block; overflow: visible; margin: 0 !important; }
+.quick__item > svg { height: calc(21px * var(--kw)); }   /* 글리프 20·24px 를 line-height 19.5 상자에 — 위아래로 넘침(피그마와 같음) */
+.quick__item span { font-size: calc(13px * var(--kw)); line-height: 1; font-weight: 600; white-space: nowrap; }
+
+/* ---------- 무대 ---------- */
+.track { position: relative; height: 1100vh; }
+.stage { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #2B79C8; }
+.view { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--k)); transform-origin: 50% 50%;
+  opacity: 0; transition: opacity 600ms cubic-bezier(.4,0,.2,1); }
+html.is-ready .view { opacity: 1; }
+.world { position: absolute; left: 0; top: 0; width: 1920px; height: 4284px; pointer-events: none; }
+.world a { pointer-events: auto; }
+.world > * { position: absolute; }
+.lyr { pointer-events: none; user-select: none; will-change: transform; }
+
+/* 하늘: 1×4284 세로 띠(0~3203 피그마 실측 행 + 3204~ 특장점 sky-base 행) */
+.sky { left: 0; top: 0; width: 1920px; height: 3204px; background: url(../assets/top/sky-col.png) 0 0 / 100% 4284px no-repeat; will-change: transform; }   /* [통합] 3204 아래(특장점 첫 화면 하늘)는 특장점 skyBase 가 카메라와 같이 올라와 잇는다 — 두 장 실측 차 평균 .07/255 */
+.dots { opacity: .54; filter: blur(1.5px); }   /* 피그마는 흰 점 40% soft-light 지만 브라우저 soft-light 는 붉게 뜸(초과 R:G:B 20.6:17:7 vs 피그마 13:21:12.5) → 실측 점 색 일반 합성으로 */
+.ellipse { pointer-events: none; display: none; }   /* 피그마 자리 그대로 두면 영상 리본(피그마 정지 리본보다 좁음) 아래로 갈색 덩어리가 드러남 → 기본 끔, ?ell=1 로 켬 */
+html.ell-on .ellipse { display: block; }
+.model { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 60px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 60px), transparent); }
+
+/* 리본: 바깥 = 카메라·막(어깨 기준 확대) / 안 = 영상 프레임 → 피그마 리본 자리 맞춤 — 제약: 어깨 아랫선을 덮고(세 프레임) 브랜드 문장과 안 겹침 → 회전 −12°·배율 1.35, IoU .59 */
+.ribbon { left: 0; top: 0; width: 1920px; height: 3204px; pointer-events: none; transform-origin: 1880px 1120px; will-change: transform; }
+.ribbon__fit { position: absolute; left: 515px; top: 667px; width: 1920px; height: 1002px;   /* 기본값 = v2(1920×1002). 실제 상자·색 필터는 js/top.js 리본 설정이 씀 */
+  transform-origin: 1101.84px 639.52px; transform: rotate(-12deg) scale(1.35); }
+html.rib-raw .ribbon__fit { filter: none; }
+.ribbon__fit > * { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.ribbon__video { opacity: 0; transition: opacity 400ms cubic-bezier(.4,0,.2,1); object-fit: fill; }
+.ribbon.is-playing .ribbon__video { opacity: 1; }
+.ribbon.is-playing .ribbon__poster { visibility: hidden; transition: visibility 0s 400ms; }
+
+/* ---------- 글자 (피그마 get_design_context) ---------- */
+.copy { margin: 0; color: var(--ink); font-weight: 700; will-change: transform; }
+.copy__line { display: block; will-change: opacity, transform; }
+/* 히어로 332:29537 (318,404 318×207): "산소 " Pretendard Bold 87.678 / "ON," Outfit SemiBold, 행간 96.463, 자간 −2.5251, 그룹 drop-shadow 0 0 2px .25 */
+.copy--hero { left: 318px; top: 404px; width: 318px; height: 207px; font-size: 87.678px; line-height: 96.463px; letter-spacing: -2.5251px; white-space: nowrap; filter: drop-shadow(0 0 2px rgba(0,0,0,.25)); }
+.hero__en { font-family: 'Outfit', sans-serif; font-weight: 600; }
+.copy__line--logo { position: absolute; left: 10px; top: 112px; }
+.copy__line--logo img { display: block; width: 209.134px; height: 79.787px; }
+/* 문장 332:29554 (328,1346): Pretendard Bold 36 / 1.5, 자간 −0.5, 그림자 0 0 4px .25 */
+.copy--brand { left: 328px; top: 1346px; font-size: 36px; line-height: 1.5; letter-spacing: -.5px; text-shadow: 0 0 4px rgba(0,0,0,.25); }
+/* 이젠 332:29555 (960,2226): Pretendard Bold 87 / 1.2, 자간 −2.88, 그림자 0 0 4px .25 */
+.copy--now { left: 960px; top: 2226px; font-size: 87px; line-height: 1.2; letter-spacing: -2.88px; text-shadow: 0 0 4px rgba(0,0,0,.25); }
+/* 모션 판: 등장 전 상태는 JS 가 첫 프레임에 쓴다(무JS 는 정지판) */
+html.has-motion .world .copy__line { opacity: 0; }
+
+/* [통합] ?motion=0 · reduce = 정지 긴 한 장이 아니라 같은 스크롤 판에서 시간 모션(로드·루프·스프링·영상)만 끈 것 */
+@media (prefers-reduced-motion: reduce) {
+  .view { transition: none; }
+}
+
+/* =====================================================================================================
+   특장점(퍼블리싱-특장점-1015 37차 css/style.css) — 무대 .f / 글자 .fc 아래로. 값은 원 판 그대로
+   ===================================================================================================== */
+:root { --bg: #AEC8E1; }
+.f-sky { left: 0; top: 0; width: 1920px; height: 1080px; background: var(--bg); }   /* 원 판 .sky(무대 바탕) */
+.f, .fc { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+.f > *, .fc > * { position: absolute; }
+.f .layer { position: absolute; display: block; pointer-events: none; user-select: none; }
+.f .skyBase { left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; will-change: opacity, transform; }   /* [통합] 다리 동안 카메라와 같이 올라오므로 transform 도 */
+.f .progTone { left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; pointer-events: none; will-change: opacity;
+  background:
+    radial-gradient(ellipse 760px 560px at 955px 520px, rgba(255,255,255,.20) 0%, rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 72%),
+    linear-gradient(to bottom, rgba(96,158,222,0) 0%, rgba(96,158,222,.14) 25%, rgba(96,158,222,.40) 52%, rgba(96,158,222,.44) 100%); }
+.f .arcs { left: 0; top: 0; width: 1920px; height: 1080px; }
+.f .disc { transform-origin: 50% 50%; }
+#dotsA, #dotsC { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; pointer-events: none; }
+.f .ground { left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; will-change: opacity, transform; }
+.f .ground__gl { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; }
+.f .orb { left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+.f .orb__look--prog { opacity: 0; }
+.f .orb__shadow {
+  position: absolute; left: -300px; width: 600px; height: 120px; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, rgba(40,95,175,.18) 0%, rgba(40,95,175,.08) 40%, rgba(40,95,175,0) 70%);
+  opacity: 0; will-change: opacity, transform;
+}
+.f .control { left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; opacity: 0; will-change: opacity, transform;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 180px); mask-image: linear-gradient(to bottom, transparent 0, #000 180px); }
+.f .control__figure { position: absolute; left: 0; top: 0; width: 1920px; height: 1081px; will-change: transform; }
+.f .control__img { transform: scale(1.012); transform-origin: 50% 50%; }
+.f .control__glow {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1081px;
+  background: radial-gradient(ellipse 560px 420px at 1100px 420px, rgba(255,255,255,.55) 0%, rgba(255,255,255,.22) 45%, rgba(255,255,255,0) 100%);
+  mix-blend-mode: screen; opacity: 0; will-change: opacity;
+}
+.fc .copy { left: 0; width: 1920px; text-align: center; color: var(--ink); margin: 0; opacity: 1; will-change: transform; }
+.fc .copy > * { opacity: 0; will-change: opacity, transform; }
+.fc .copy--oxygen   { top: 496px; }
+.fc .copy--pressure { top: 476px; }
+.fc .copy--program  { top: 444px; left: -4.4px; }
+.fc .copy--control  { top: 640px; }
+.fc .copy__title { margin: 0; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 98px; letter-spacing: -2.88px; }
+.fc .copy__sub { margin: 22px 0 0; font-family: 'Pretendard', -apple-system, sans-serif; font-weight: 600; font-size: 24px; line-height: 38px; }
+.fc .copy__sub sup { font-size: .55em; vertical-align: super; line-height: 0; }
+.fc .copy__body { margin: 22px 0 0; font-family: 'Pretendard', -apple-system, sans-serif; font-weight: 600; font-size: 18px; line-height: 27px; letter-spacing: -0.5px; }
+
+/* =====================================================================================================
+   [4차 하단 1019] LINE UP · MEDIA · PROFESSIONALS · Q&A · 푸터 — 피그마 332:29548 하단, 1920 폭 px 그대로.
+   .lower 하나를 zoom(--kw) 로 화면 폭에 맞춘다(무대와 달리 일반 흐름이라 높이도 같이 줄어야 해서 transform 대신 zoom).
+   색 = 피그마 변수: ibex/ink #1E2A3A · ibex/quick #4276B2 · 회색 #7A8DA6·#4C5A6D·#7D7D7D·#506174·#63768B·#959595
+   ===================================================================================================== */
+html { background: linear-gradient(#2B79C8 50%, #1E2A3A 50%); }   /* 고무줄 오버스크롤: 위 = 기존 파랑, 아래 = 푸터색(무대·섹션이 다 덮어 화면엔 안 보임) */
+.lower { position: relative; zoom: var(--kw); width: 1920px; overflow-x: clip;   /* 가로만 자름 — 도트가 오른쪽(2140)으로 넘쳐 가로 스크롤이 생기던 것. 위로 넘치는 spill 은 살림 */
+  color: #1E2A3A; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+:where(.lower) :where(h2, h3, p, ul, ol) { margin: 0; padding: 0; list-style: none; font-weight: inherit; font-size: inherit; }   /* 리셋은 우선순위 0 — 섹션 규칙을 덮지 않게 */
+.lower section, .lower footer { position: relative; overflow: hidden; }
+.ph { position: absolute; display: block; max-width: none; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.h68 { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 1; white-space: nowrap; }
+
+/* ---------- 1. LINE UP 332:29571 ---------- */
+.lineup { height: 1391px; background: #AEC8E1; }
+.lineup__dots { position: absolute; left: 1082px; top: -180px; width: 1058px; height: 1056px; pointer-events: none; }   /* 상자(회전 전) = 피그마 Vector 상자 + 블러 여유 3 — 가운데 (1611,348) */
+.lineup__dots img { display: block; width: 100%; height: 100%; transform: rotate(90deg); }
+/* 프레임 위 넘침(피그마는 위로 178px 넘쳐 그려짐) 처리 — js/lower.js 가 html.ld-clip|ld-over|ld-fade 를 붙임 */
+.lineup__dots--spill { display: none; }
+html.ld-over .lineup, html.ld-spill .lineup { overflow: visible; }
+/* spill(기본): 프레임 안 = 피그마 그대로 늘 보임 / 위로 넘친 180px = 둘째 겹, 고정 무대가 풀린 뒤 첫 140px 스크롤 동안 차오름(js 가 --spill) — CONTROL 끝 화면은 그대로 */
+html.ld-spill .lineup__dots { clip-path: inset(180px 0 0 0); }
+html.ld-spill .lineup__dots--spill { display: block; clip-path: inset(0 0 876px 0); opacity: var(--spill, 0); }
+html.ld-over .lineup, html.ld-fade .lineup { z-index: 1; }
+html.ld-fade .lineup__dots { -webkit-mask-image: linear-gradient(to bottom, transparent 180px, #000 420px); mask-image: linear-gradient(to bottom, transparent 180px, #000 420px); }
+.lineup__title { position: absolute; left: 835px; top: 365px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 1; white-space: nowrap; color: #1E2A3A; }
+.lineup__sub { position: absolute; left: 960.5px; top: 447px; transform: translateX(-50%); text-align: center; white-space: nowrap; font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.5px; color: #1E2A3A; }
+.lineup__list { position: absolute; left: 199px; top: 608px; width: 1521px; display: flex; gap: 40px; align-items: center; }
+.product { flex: 1 0 0; min-width: 1px; height: 532px; display: flex; flex-direction: column; align-items: center; gap: 32px; overflow: clip; }
+.product__img { position: relative; width: 100%; height: 420px; flex: none; background: #fff; overflow: hidden; }
+.product__kind, .product__name { font-family: 'Outfit', sans-serif; font-weight: 600; line-height: 1; white-space: nowrap; padding: 0 4px; }
+.product__kind { font-size: 24px; color: #7A8DA6; }
+.product__name { font-size: 32px; color: #4C5A6D; margin-top: -22px; }   /* 글자 묶음 gap 10 (부모 gap 32 − 22) */
+
+/* ---------- 2. MEDIA 332:29605 ---------- */
+.media { height: 1274px; background: #fff; }
+.media__title { position: absolute; left: 851px; top: 193px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 1; text-transform: uppercase; white-space: nowrap; }
+.media__sub { position: absolute; left: 833px; top: 275px; font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.5px; white-space: nowrap; }
+.media__scroller { position: absolute; left: 0; top: 418px; width: 1920px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; outline: none; }
+.media__scroller::-webkit-scrollbar { display: none; }
+.media__scroller.is-drag { cursor: grabbing; }
+.media__scroller.is-drag .news__link { pointer-events: none; }
+.media__scroller:focus-visible { box-shadow: inset 0 0 0 2px #4276B2; }
+.media__row { display: flex; gap: 20px; align-items: flex-end; width: max-content; padding: 0 199px; }   /* 오른쪽 여백도 199 — 다섯째 카드가 왼쪽 첫 카드와 같은 여백으로 멈춘다(최대 이동 483px) */
+.news { width: 385px; flex: none; }
+.news--3 { height: 689px; display: flex; flex-direction: column; justify-content: flex-end; }
+.news__link { display: flex; flex-direction: column; gap: 32px; color: inherit; text-decoration: none; -webkit-user-drag: none; user-select: none; }
+.news__link:focus-visible { outline: 2px solid #4276B2; outline-offset: 6px; }
+.news__img { position: relative; width: 385px; overflow: hidden; flex: none; }
+.news__text { display: flex; flex-direction: column; gap: 20px; }
+.news__head { display: flex; flex-direction: column; gap: 12px; }
+.news__title { font-weight: 600; font-size: 20px; line-height: 1.5; color: #1E2A3A; }
+.news__desc { font-weight: 400; font-size: 16px; line-height: 1.5; color: #7D7D7D; }
+.news__date { display: block; font-weight: 300; font-size: 16px; line-height: 1; letter-spacing: -.4px; text-transform: uppercase; color: #1E2A3A; }
+.news__title { transition: opacity 180ms cubic-bezier(.4,0,.2,1); }
+.news__link:hover .news__title { opacity: .64; }
+
+/* ---------- 3. PROFESSIONALS 332:29674 ---------- */
+.pro { height: 520px; background: #4276B2; display: flex; align-items: center; justify-content: space-between; padding: 163px 199px; color: #fff; }
+.pro__bg { position: absolute; opacity: .7; max-width: none; pointer-events: none; }
+.pro__head { position: relative; width: 539px; display: flex; flex-direction: column; gap: 14px; }
+.pro__title { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 1; text-transform: uppercase; white-space: nowrap; }
+.pro__sub { font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.5px; }
+.pro__form { position: relative; width: 610px; display: flex; flex-direction: column; gap: 40px; margin: 0; }
+.pro__row { display: flex; gap: 8px; align-items: flex-end; }
+.pro__field { flex: 1 0 0; min-width: 1px; display: flex; flex-direction: column; gap: 8px; }
+.pro__label { font-weight: 600; font-size: 14px; line-height: 14px; opacity: .5; }
+.pro__input { display: block; width: 100%; height: 52px; margin: 0; padding: 0 16px; border: 1px solid rgba(255,255,255,.2); border-radius: 0; background: rgba(255,255,255,.5);
+  font: 400 16px/1 'Pretendard', sans-serif; color: #1E2A3A; outline: none; -webkit-appearance: none; appearance: none; transition: border-color 180ms cubic-bezier(.4,0,.2,1), background-color 180ms cubic-bezier(.4,0,.2,1); }
+.pro__input:hover { border-color: rgba(255,255,255,.45); }
+.pro__input:focus-visible, .pro__input:focus { border-color: rgba(255,255,255,.9); background: rgba(255,255,255,.62); }
+.pro__btn { flex: none; width: 90px; height: 52px; margin: 0; padding: 0; border: 0; border-radius: 0; background: #1E2A3A; color: #fff; cursor: pointer;
+  font: 700 16px/1 'Pretendard', sans-serif; letter-spacing: .12px; transition: background-color 180ms cubic-bezier(.4,0,.2,1); }
+.pro__btn:hover { background: #2a3a50; }
+.pro__btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.pro__note { font-weight: 400; font-size: 16px; line-height: 1.5; letter-spacing: .12px; white-space: nowrap; }
+.pro__note a { color: #fff; text-decoration: underline; text-decoration-skip-ink: none; text-underline-position: from-font; transition: opacity 180ms cubic-bezier(.4,0,.2,1); }
+.pro__note a:hover { opacity: .72; }
+.pro__note a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* ---------- 4. Q&A 338:495 ---------- */
+.qna { height: 1195px; background: #fff; }
+.qna__dots { position: absolute; left: -112px; top: 548px; width: 750px; height: 748px; transform: rotate(90deg); pointer-events: none; }
+.qna__title { position: absolute; left: 202px; top: 99px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 68px; line-height: 1; white-space: nowrap; }
+.qna__sub { position: absolute; left: 202px; top: 181px; font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.5px; white-space: nowrap; }
+.qna__list { position: absolute; left: 1015px; top: 63px; width: 850px; }
+.qa { display: flex; gap: 16px; align-items: flex-start; padding: 40px 0; border-bottom: 1px solid rgba(0,0,0,.1); }
+.qa:last-child { border-bottom: 0; }
+.qa__no { flex: none; width: 40px; height: 28px; display: flex; align-items: center; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 24px; line-height: 19.2px; color: #506174; }
+.qa__body { flex: 1 0 0; min-width: 1px; display: flex; flex-direction: column; gap: 20px; }
+.qa__q { font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.6px; color: #506174; }
+.qa__a { font-weight: 400; font-size: 18px; line-height: 1.5; color: #63768B; }
+
+/* ---------- 5. 푸터 338:10236 ---------- */
+.foot { height: 511px; background: #1E2A3A; box-shadow: inset 0 1px 0 rgba(0,0,0,.1);   /* 피그마 테두리 = 안쪽(내용을 밀지 않음) */
+  display: flex; flex-direction: column; align-items: center; gap: 80px; padding: 80px 0; color: #959595; font-size: 16px; }
+.foot__cols { display: flex; gap: 40px; align-items: flex-start; width: 100%; padding: 0 124px; }
+.foot__col { flex: 1 0 0; min-width: 1px; display: flex; flex-direction: column; gap: 21px; }
+.foot__col--b { gap: 18px; }
+.foot__col h3 { font-weight: 700; font-size: 18px; line-height: 19px; color: #fff; }
+.foot__logo { display: block; width: 56px; height: 21px; }
+.foot__lines { display: flex; flex-direction: column; gap: 9px; line-height: 1.2; }
+.foot__line { width: 100%; height: 0; margin: 0; border: 0; border-top: 1px solid rgba(0,0,0,.1); flex: none; }
+.foot__legal { display: flex; flex-direction: column; gap: 20px; width: 100%; padding: 0 124px; }
+.foot__copy { line-height: 14px; }
+.foot__notice { line-height: 1.4; white-space: pre-wrap; }
+
+/* ---------- GNB 하단 톤(js/lower.js 가 GNB 띠 아래 섹션을 보고 html[data-gnb] 를 씀). 무대 구간 = 속성 없음 → 위쪽 그대로 ----------
+   피그마엔 하단 GNB 상태가 없음 → 섹션 바탕색 띠 + 글자색만 바꿈(내용이 GNB 아래로 지나갈 때 글자끼리 겹치지 않게) */
+.gnb::before { content: ''; position: absolute; inset: 0; background: var(--gnb-bar, transparent); opacity: 0; transition: opacity 250ms cubic-bezier(.4,0,.2,1), background-color 250ms cubic-bezier(.4,0,.2,1); pointer-events: none; }
+.gnb > * { position: relative; }
+.gnb__logo { position: relative; }
+.gnb__logo-ink { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity 250ms cubic-bezier(.4,0,.2,1); }
+.gnb__logo img:first-child { transition: opacity 250ms cubic-bezier(.4,0,.2,1); }
+.gnb__nav a { transition: opacity 180ms cubic-bezier(.4,0,.2,1), color 250ms cubic-bezier(.4,0,.2,1); }
+html[data-gnb] .gnb::before { opacity: 1; }
+html[data-gnb="sky"]   { --gnb-bar: #AEC8E1; }
+html[data-gnb="white"] { --gnb-bar: #fff; }
+html[data-gnb="pro"]   { --gnb-bar: rgba(66,118,178,.42); }   /* 배너는 사진(Gossamer) 위 — 단색 띠면 사진이 잘려 보여 반투명 + 블러 */
+html[data-gnb="pro"] .gnb::before { -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+html[data-gnb="foot"]  { --gnb-bar: #1E2A3A; }
+html[data-gnb="sky"] .gnb__nav a, html[data-gnb="white"] .gnb__nav a { color: #1E2A3A; }
+html[data-gnb="sky"] .gnb__logo-ink, html[data-gnb="white"] .gnb__logo-ink { opacity: 1; }
+html[data-gnb="sky"] .gnb__logo img:first-child, html[data-gnb="white"] .gnb__logo img:first-child { opacity: 0; }
+html[data-gnb="sky"] .gnb a:focus-visible, html[data-gnb="white"] .gnb a:focus-visible { outline-color: #1E2A3A; }
+
+/* ---------- [5차] 하단 스무딩 + 묶음 패럴랙스(js/lower.js 가 html.lpar-on). 무대와 하단을 둘 다 '스크롤이 직접 옮기지 않는' 고정 판으로 두고
+   JS 가 스무딩된 Ys 하나로 그린다 — 위쪽 엔진(sticky 무대 + JS 변환)과 같은 원리. 네이티브 스크롤(컴포지터)이 하단을 1:1 로 끌고 가면
+   JS 변환이 한 프레임 늦게 따라와 덜컥이는 것(4차 하단의 '종이 한 장' 느낌의 바탕)을 원천에서 없앤다. 문서 높이는 #lowerSpacer 가 지킨다. ---------- */
+html.lpar-on .stage { position: fixed; top: 0; left: 0; right: 0; will-change: translate; }   /* 고정 구간에선 sticky 와 같은 자리(변환 0) */
+html.lpar-on .lower { position: fixed; top: 0; left: 0; will-change: translate; }
+html.lpar-on .lower .rise { will-change: auto; }
+.lower-spacer { display: none; }
+html.lpar-on .lower-spacer { display: block; }
+
+/* ---------- 등장(절제): 아래 16px(글자)·24px(카드)에서 떠오르며 페이드 — 특장점 글자 문법(16px·순차 .18s)과 같은 결. ?rise=0 · reduce 끔 ---------- */
+html.rise-on .lower .rise { opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity 700ms cubic-bezier(.4,0,.2,1), transform 900ms cubic-bezier(.22,.61,.36,1); transition-delay: var(--rd, 0ms); }
+html.rise-on .lower .product.rise, html.rise-on .lower .news.rise { transform: translate3d(0, 24px, 0); }
+html.rise-on .lower .lineup__sub.rise { transform: translate3d(-50%, 16px, 0); }
+html.rise-on .lower .rise.is-in { opacity: 1; transform: translate3d(0, 0, 0); }
+html.rise-on .lower .lineup__sub.rise.is-in { transform: translate3d(-50%, 0, 0); }
+@media (prefers-reduced-motion: reduce) { .gnb::before, .gnb__nav a, .gnb__logo img { transition: none; } }
+
+/* ---------- [9차 1019] 하단 도트 파동(js/lower.js 가 img → canvas 로 바꿈, html.ldw-on). svg 안의 그룹 opacity·블러를 캔버스 요소에 — 같은 합성 순서(블러 → 불투명도) ---------- */
+.lineup__dots canvas.ldw-cv { display: block; width: 100%; height: 100%; transform: rotate(90deg); opacity: .3; filter: blur(1.5px); }
+canvas.qna__dots.ldw-cv { opacity: .1; filter: blur(2px); }
+
+/* 통합 10차: 특장점 무대는 top.js 첫 프레임이 다리 전/후를 정할 때까지 숨김(로드 때 OXYGEN 호가 비치던 것) */
+#feat { visibility: hidden; }
+
+/* 통합 16차: LINE UP 도트를 섹션 안으로 내림(위 넘침 −180 → +120, 섹션이 자름) — CONTROL 도트와 겹치지 않게 */
+html.ld-down .lineup__dots { top: 40px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.35) 120px, #000 300px); mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.35) 120px, #000 300px); }   /* 18차(사장님 '이렇게 잘려 보이게 수정됐네?'): 무늬 윗변(피그마에선 프레임 위로 넘쳐 있던 쪽)이 칼같이 끊겨 보임 → 위 300px 를 서서히 */
+html.ld-down .lineup__dots--spill { display: none; }
+
+/* 통합 20차: 무대(고정)와 LINE UP 사이 소수 px 틈으로 html 바탕(#2B79C8)이 1px 줄로 비침(실측 y 912 rgb 118,166,215) → 섹션 윗선 위 4px 를 같은 색으로 덮음 */
+.lineup { box-shadow: 0 -4px 0 #AEC8E1; }
+
+/* =====================================================================================================
+   [22차 1019] 반응형 — js/rwd.js 가 html 클래스·변수를 씀. 이 블록 밖(1~21차 규칙)은 손대지 않았다. ?rwd=0 = 전부 꺼짐(클래스 없음).
+   rwd-stage  : 무대를 rwd.js 가 배치(세로 화면 시점 이동 · 상자 밖 연장). 데스크톱 가로(1920·1440·1280·2560·1180)는 붙지 않음 = 지금 그대로
+   rwd-ext    : 상자 밖이 보임(세로 = 위아래, 초광폭 = 양옆 rwd-wide) · rwd-narrow : 창 폭 < 세계 1300px(글자 자리 옮김)
+   rwd-ts     : 글자 화면 px 바닥(배율 --hs 히어로 · --bs 문장 · --ns 이젠 · --fts/--fss/--fbs 특장점 제목/부제/본문)
+   rwd-flow   : 폭 < 1200 — 하단 흐름 배치 · GNB 메뉴 버튼 · 플로팅 아래 알약 / rwd-mobile : 폭 < 768 / rwd-swipe : 폭 < 1024(LINE UP 가로 넘김)
+   ===================================================================================================== */
+.gnb__menu { display: none; }
+
+/* ---------- 무대 ---------- */
+html.rwd-stage .view { left: 0; top: 0; transform-origin: 0 0; overflow: visible; }   /* 변환은 rwd.js 가 매 프레임(pan) */
+/* 상자 밖 연장 — 늘려도 같은 그림인 것만 늘린다: 하늘 띠(세로 1px 열)·특장점 바탕(세로 그라데이션)·바탕색 */
+html.rwd-ext .sky { left: calc(-1 * var(--ex)); width: calc(1920px + 2 * var(--ex)); }
+/* 하늘 띠(4px 폭 열 그림을 세로로 크게 늘린 것)는 축소 래스터 때 위·아래 끝 행이 반대쪽 끝 색과 섞여 띠가 생긴다(세로 화면에서 OXYGEN 위로 보임, 데스크톱은 화면 밖)
+   → 끝 120px 를 그 행의 단색으로 덮음(그림 실측: 0~120 = 43,121,200 · 3084~3204 = 173~174,200,225) */
+html.rwd-ext .sky::before, html.rwd-ext .sky::after { content: ''; position: absolute; left: 0; right: 0; height: 120px; }
+html.rwd-ext .sky::before { top: 0; background: rgb(43,121,200); }
+html.rwd-ext .sky::after { bottom: -3px; height: 123px; background: rgb(174,200,225); }   /* 3px 더 — 특장점 하늘(skyBase)과 맞닿는 윗변의 안티앨리어싱 틈 */
+html.rwd-ext .f-sky { position: absolute; top: 2px;   /* 2px: 하늘 띠 윗변 안티앨리어싱 사이로 밝은 바탕이 1px 줄로 비치지 않게(세로 화면 cam 0 에서 상자 윗변이 화면 안) */
+  left: calc(-1 * var(--ex)); width: calc(1920px + 2 * var(--ex)); height: max(1080px, var(--ry1)); }
+html.rwd-ext .f .skyBase { left: calc(-1 * var(--ex)); width: calc(1920px + 2 * var(--ex)); height: max(1200px, var(--ry1)); overflow: visible;
+  background: linear-gradient(to bottom, transparent 1199px, rgb(176,203,228) 1199px); }   /* 그림(1200 높이) 아래 = 그림 맨 아래 행 색 */
+html.rwd-ext .f .skyBase img { width: 100% !important; }
+html.rwd-ext .f .progTone { left: var(--rx0); top: var(--ry0); width: calc(var(--rx1) - var(--rx0)); height: calc(var(--ry1) - var(--ry0));
+  background:
+    radial-gradient(ellipse 760px 560px at calc(955px - var(--rx0)) calc(520px - var(--ry0)), rgba(255,255,255,.20) 0%, rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 72%),
+    linear-gradient(to bottom, rgba(96,158,222,0) calc(0px - var(--ry0)), rgba(96,158,222,.14) calc(270px - var(--ry0)), rgba(96,158,222,.40) calc(561.6px - var(--ry0)), rgba(96,158,222,.44) calc(1080px - var(--ry0))); }
+/* 초광폭: 좌우가 잘린 그림의 끝을 하늘로 녹임(아래 구름은 rwd.js 가 거울 복제) */
+/* 위 구름 두 장은 세계 맨 위(0)에서 잘려 있다 — 세로 화면은 그 윗변이 보이므로 위 70px 를 녹이고, 초광폭은 바깥쪽 변도 녹인다 */
+html.rwd-ext .cloud--tl, html.rwd-ext .cloud--tr { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 70px); mask-image: linear-gradient(to bottom, transparent, #000 70px); }
+html.rwd-wide .cloud--tl { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 70px), linear-gradient(to right, transparent, #000 200px); mask-image: linear-gradient(to bottom, transparent, #000 70px), linear-gradient(to right, transparent, #000 200px); -webkit-mask-composite: source-in; mask-composite: intersect; }
+html.rwd-wide .cloud--tr { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 70px), linear-gradient(to left, transparent, #000 80px); mask-image: linear-gradient(to bottom, transparent, #000 70px), linear-gradient(to left, transparent, #000 80px); -webkit-mask-composite: source-in; mask-composite: intersect; }
+html.rwd-wide .f .control__img { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 280px, #000 calc(100% - 280px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 280px, #000 calc(100% - 280px), transparent 100%); }
+
+/* 글자 화면 px 바닥 */
+html.rwd-ts .copy--hero { font-size: calc(87.678px * var(--hs)); line-height: calc(96.463px * var(--hs)); letter-spacing: calc(-2.5251px * var(--hs)); width: calc(318px * var(--hs)); height: calc(207px * var(--hs)); }
+html.rwd-ts .copy__line--logo { left: calc(10px * var(--hs)); top: calc(112px * var(--hs)); }
+html.rwd-ts .copy__line--logo img { width: calc(209.134px * var(--hs)); height: calc(79.787px * var(--hs)); }
+html.rwd-ts .copy--brand { font-size: calc(36px * var(--bs)); letter-spacing: calc(-.5px * var(--bs)); }
+html.rwd-ts .copy--now { font-size: calc(87px * var(--ns)); letter-spacing: calc(-2.88px * var(--ns)); }
+html.rwd-ts .fc .copy__title { font-size: calc(68px * var(--fts)); line-height: calc(98px * var(--fts)); letter-spacing: calc(-2.88px * var(--fts)); }
+html.rwd-ts .fc .copy__sub { margin-top: calc(22px * var(--fss)); font-size: calc(24px * var(--fss)); line-height: calc(38px * var(--fss)); }
+html.rwd-ts .fc .copy__body { margin-top: calc(22px * var(--fbs)); font-size: calc(18px * var(--fbs)); line-height: calc(27px * var(--fbs)); letter-spacing: calc(-.5px * var(--fbs)); }
+/* 좁은 창: 히어로는 얼굴 아래 빈 하늘로, '이젠' 은 창 왼쪽 여백에(문장과 같은 정렬), 특장점 글자는 창 폭 안에서 다시 줄바꿈(문구는 그대로) */
+html.rwd-narrow .copy--hero { left: var(--heroL); top: 660px; }
+html.rwd-narrow .copy--now { left: var(--nowL); }
+html.rwd-narrow .fc .copy > * { max-width: calc(var(--ww) - 2 * var(--wm)); margin-left: auto; margin-right: auto; word-break: keep-all; text-wrap: balance; }
+html.rwd-narrow .fc .copy__title { white-space: nowrap; }
+
+/* ---------- GNB · 플로팅 (폭 < 1200) ---------- */
+html.rwd-flow { --pad: clamp(20px, 6vw, 56px); }
+html.rwd-flow .gnb { height: 64px; padding: 0 var(--pad); align-items: center; }
+html.rwd-flow .gnb__logo { width: 64px; height: 24px; z-index: 2; }
+html.rwd-flow .gnb__menu { display: block; position: relative; z-index: 2; pointer-events: auto; width: 44px; height: 44px; margin: 0 -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html.rwd-flow .gnb__menu span { position: absolute; left: 11px; right: 11px; height: 2px; border-radius: 1px; background: #fff; transition: transform 220ms cubic-bezier(.4,0,.2,1), background-color 250ms cubic-bezier(.4,0,.2,1); }
+html.rwd-flow .gnb__menu span:first-child { top: 17px; }
+html.rwd-flow .gnb__menu span:last-child { top: 25px; }
+html[data-gnb="sky"].rwd-flow .gnb__menu span, html[data-gnb="white"].rwd-flow .gnb__menu span { background: #1E2A3A; }
+html.menu-open .gnb__menu span { background: #fff !important; }
+html.menu-open .gnb__menu span:first-child { transform: translateY(4px) rotate(45deg); }
+html.menu-open .gnb__menu span:last-child { transform: translateY(-4px) rotate(-45deg); }
+html.rwd-flow .gnb__menu:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; color: #fff; }
+html.rwd-flow .gnb__nav { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px;
+  padding: 0 var(--pad); background: rgba(30,42,58,.97); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 220ms cubic-bezier(.4,0,.2,1), visibility 0s linear 220ms; }
+html.menu-open .gnb__nav { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 220ms cubic-bezier(.4,0,.2,1); }
+html.rwd-flow .gnb__nav a { font-size: clamp(22px, 6vw, 30px); line-height: 1.7; letter-spacing: 2px; margin-right: 0; color: #fff !important; }
+html.menu-open .gnb__logo-ink { opacity: 0 !important; }
+html.menu-open .gnb__logo img:first-child { opacity: 1 !important; }
+html.menu-open, html.menu-open body { overflow: hidden; }
+html.rwd-flow .quick { left: 50%; top: auto; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: auto; height: 54px;
+  flex-direction: row; align-items: center; justify-content: center; padding: 0 24px; gap: 26px; }
+html.rwd-flow .quick__item { gap: 4px; }
+html.rwd-flow .quick__item > svg { width: 18px !important; height: 18px !important; }
+html.rwd-flow .quick__item span { font-size: 10px; }
+
+/* ---------- 하단 흐름 배치 (폭 < 1200). 서체·색·여백 비율은 피그마 그대로, 자리만 흐름으로 ---------- */
+html.rwd-flow .lower { width: 100%; --h1: clamp(36px, 7vw, 56px); --sub: clamp(15px, 2.2vw, 20px); --secT: clamp(96px, 13vw, 140px); --secB: clamp(80px, 10vw, 120px); }
+html.rwd-flow .lower section > :is(h2, p, ul, ol, div, form):not(.lineup__dots):not(.pro__bg) { position: relative; left: auto; top: auto; }
+/* LINE UP */
+html.rwd-flow .lineup { height: auto; padding: var(--secT) var(--pad) var(--secB); text-align: center; }
+html.rwd-flow .lineup__title { display: block; font-size: var(--h1); }
+html.rwd-flow .lineup__sub { transform: none; margin-top: 16px; font-size: var(--sub); white-space: normal; }
+html.rwd-flow .lineup__list { width: auto; margin-top: clamp(40px, 6vw, 64px); zoom: var(--lz); justify-content: center; align-items: stretch; }
+html.rwd-flow .product { flex: 0 0 480.33px; }
+html.rwd-flow.rwd-swipe .lineup__list { justify-content: flex-start; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+  margin-left: calc(-1 * var(--pad) / var(--lz)); margin-right: calc(-1 * var(--pad) / var(--lz)); padding: 0 calc(var(--pad) / var(--lz)); }
+html.rwd-flow.rwd-swipe .lineup__list::-webkit-scrollbar { display: none; }
+html.rwd-flow .lineup__dots { left: auto; right: calc(-.18 * 1058px * var(--ldz)); top: calc(-.08 * 1056px * var(--ldz)); width: calc(1058px * var(--ldz)); height: calc(1056px * var(--ldz)); --ldz: .62;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.35) 11%, #000 28%); mask-image: linear-gradient(to bottom, transparent 0, rgba(0,0,0,.35) 11%, #000 28%); }
+html.rwd-flow.rwd-mobile .lineup__dots { --ldz: .5; right: calc(-.42 * 1058px * var(--ldz)); }
+/* MEDIA */
+html.rwd-flow .media { height: auto; padding: var(--secT) 0 var(--secB); text-align: center; }
+html.rwd-flow .media__title { display: block; font-size: var(--h1); }
+html.rwd-flow .media__sub { margin-top: 14px; font-size: var(--sub); white-space: normal; padding: 0 var(--pad); }
+html.rwd-flow .media__scroller { width: 100%; margin-top: clamp(40px, 6vw, 64px); text-align: left; }
+html.rwd-flow .media__row { zoom: var(--mz); padding: 0 calc(var(--pad) / var(--mz)); }
+html.rwd-flow .news__title { font-size: calc(15.5px / var(--mz)); }
+html.rwd-flow .news__desc { font-size: calc(13px / var(--mz)); }
+html.rwd-flow .news__date { font-size: calc(12px / var(--mz)); }
+/* PROFESSIONALS */
+html.rwd-flow .pro { height: auto; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 32px; padding: clamp(64px, 10vw, 96px) var(--pad); }
+html.rwd-flow .pro__bg { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover; }
+html.rwd-flow .pro__head { width: auto; gap: 12px; }
+html.rwd-flow .pro__title { font-size: clamp(32px, 8.6vw, 56px); }
+html.rwd-flow .pro__sub { font-size: var(--sub); }
+html.rwd-flow .pro__form { width: 100%; max-width: 610px; gap: 24px; }
+html.rwd-flow .pro__note { white-space: normal; font-size: 14px; }
+html.rwd-flow .pro__input { font-size: 16px; }   /* iOS: 16px 미만이면 입력 때 화면이 확대된다 */
+html.rwd-flow.rwd-mobile .pro__row { flex-wrap: wrap; gap: 12px; }
+html.rwd-flow.rwd-mobile .pro__field { flex: 1 1 100%; }
+html.rwd-flow.rwd-mobile .pro__btn { width: 100%; }
+/* Q&A */
+html.rwd-flow .qna { height: auto; padding: var(--secT) var(--pad) var(--secB); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); grid-template-rows: auto auto 1fr; column-gap: clamp(32px, 5vw, 64px); align-items: start; }
+html.rwd-flow .qna__title { grid-column: 1; grid-row: 1; font-size: var(--h1); }
+html.rwd-flow .qna__sub { grid-column: 1; grid-row: 2; margin-top: 14px; font-size: var(--sub); white-space: normal; }
+html.rwd-flow .qna__list { grid-column: 2; grid-row: 1 / 4; width: auto; margin-top: -24px; }
+html.rwd-flow .qa { padding: 26px 0; gap: 12px; }
+html.rwd-flow .qa__no { width: 30px; height: 24px; font-size: 18px; }
+html.rwd-flow .qa__body { gap: 10px; }
+html.rwd-flow .qa__q { font-size: clamp(17px, 2vw, 20px); letter-spacing: -.4px; }
+html.rwd-flow .qa__a { font-size: 15px; line-height: 1.6; }
+html.rwd-flow canvas.qna__dots, html.rwd-flow img.qna__dots { left: calc(-.3 * 750px * var(--qdz)); top: auto; bottom: calc(-.32 * 748px * var(--qdz)); width: calc(750px * var(--qdz)); height: calc(748px * var(--qdz)); --qdz: .7; position: absolute; }
+html.rwd-flow.rwd-mobile .qna { display: block; }
+html.rwd-flow.rwd-mobile .qna__list { margin-top: 28px; }
+html.rwd-flow.rwd-mobile canvas.qna__dots, html.rwd-flow.rwd-mobile img.qna__dots { --qdz: .52; left: auto; right: calc(-.38 * 750px * var(--qdz)); top: calc(-.2 * 748px * var(--qdz)); bottom: auto; }
+/* 푸터 */
+html.rwd-flow .foot { height: auto; align-items: stretch; gap: 36px; padding: 56px var(--pad) calc(104px + env(safe-area-inset-bottom, 0px)); font-size: 14px; }
+html.rwd-flow .foot__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; padding: 0; }
+html.rwd-flow .foot__legal { padding: 0; gap: 14px; }
+html.rwd-flow .foot__notice { white-space: normal; font-size: 12px; line-height: 1.6; }
+html.rwd-flow.rwd-mobile .foot__cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (pointer: coarse) {
+  html.rwd-flow .media__scroller, html.rwd-flow.rwd-swipe .lineup__list { scroll-snap-type: x mandatory; }
+  html.rwd-flow .news, html.rwd-flow.rwd-swipe .product { scroll-snap-align: start; scroll-margin-left: var(--pad); }
+}
+@media (prefers-reduced-motion: reduce) { html.rwd-flow .gnb__nav, html.rwd-flow .gnb__menu span { transition: none; } }
+
+/* [25차 1019] 폰 세로(폭 < 768) — 사장님: "모바일일때, 모델이 화면에 잘려도 되니 오른쪽으로 붙여주고, 이젠 산소의 시간은 하늘에 배경에서 나타나도록 수정"
+   히어로 = 얼굴 왼쪽 하늘(데스크톱과 같은 높이 404, 창 왼쪽 여백 — rwd.js 가 --heroL).
+   이젠 = 아래 구름 윗선(열마다 실측: x 520~680 은 세계 2150~2350 까지 솟은 구름 덩어리, x 720~1460 은 2500 아래)을 피해 x 760 · 80px 위(멈춤 03 에서 글자 아래끝 2435 < 구름 윗선 ≥ 2506).
+   구름(깊이 1.25)이 글자(.55)보다 빨리 올라오므로 03 에서 맑으면 등장부터 03 까지 내내 맑다. */
+html.rwd-narrow.rwd-mobile .copy--hero { top: 404px; }
+html.rwd-narrow.rwd-mobile .copy--now { left: 760px; top: 2146px; }
